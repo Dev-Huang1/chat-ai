@@ -3,9 +3,9 @@ import { useAuth } from '@clerk/nextjs';
 import { notFound } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import dbConnect from '../../../../lib/mongodb';
-import Post from '../../../../models/Post';
-import User from '../../../../models/User';
+import dbConnect from '../../../lib/mongodb';
+import Post from '../../../models/Post';
+import User from '../../../models/User';
 
 interface Comment {
   _id: string;
@@ -19,9 +19,17 @@ interface PostPageProps {
   params: { id: string };
 }
 
+interface PostType {
+  _id: string;
+  content: string;
+  image?: string;
+  likes: string[];
+  comments: Comment[];
+}
+
 export default function PostPage({ params }: PostPageProps) {
   const { userId } = useAuth();
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<PostType | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
