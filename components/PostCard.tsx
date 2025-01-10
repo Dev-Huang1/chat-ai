@@ -13,7 +13,7 @@ interface PostCardProps {
       profileImage?: string;
     };
     likes: string[];
-    comments: any[];
+    comments: { _id: string; content: string; author: { username: string } }[]; // Define comments structure
     image?: string;
     createdAt: string;
   }
@@ -50,4 +50,3 @@ export default function PostCard({ post }: PostCardProps) {
     </Card>
   )
 }
-
