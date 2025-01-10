@@ -40,12 +40,13 @@ export default function PostPage({ params }: PostPageProps) {
   }, [userId, params.id]);
 
   const likePost = async () => {
-    if (currentUser && post && !post.likes.includes(currentUser._id)) {
+    if (currentUser && post && !post.likes.includes(currentUser._id as mongoose.Types.ObjectId)) {
       post.likes.push(currentUser._id);
       await post.save();
       setPost({ ...post });
     }
   };
+
 
   const addComment = async (formData: FormData) => {
     if (!currentUser || !post) return;
