@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import dbConnect from '../../../../lib/mongodb';
+import mongoose from 'mongoose';
 import Post from '../../../../models/Post';
 import User from '../../../../models/User';
 
