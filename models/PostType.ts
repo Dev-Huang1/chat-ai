@@ -1,10 +1,10 @@
-import { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 export interface PostType {
-  _id: ObjectId;
+  _id: mongoose.Types.ObjectId;
   content: string;
   image?: string;
-  likes: ObjectId[];
-  comments: { content: string; author: ObjectId }[];
+  likes: mongoose.Types.ObjectId[];
+  comments: { content: string; author: mongoose.Types.ObjectId }[];
   author: { username: string };
 }
