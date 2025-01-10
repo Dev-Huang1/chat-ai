@@ -29,6 +29,7 @@ interface PostType {
 }
 
 export default function PostPage({ params }: PostPageProps) {
+  const currentUser: UserType | null = await User.findOne({ clerkId: userId });
   const { userId } = useAuth();
   const [post, setPost] = useState<PostType | null>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
