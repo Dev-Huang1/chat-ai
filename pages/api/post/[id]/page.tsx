@@ -6,7 +6,19 @@ import dbConnect from '../../../lib/mongodb';
 import Post from '../../../models/Post';
 import User from '../../../models/User';
 
-export default async function PostPage({ params }: { params: { id: string } }) {
+interface Comment {
+  _id: string;
+  content: string;
+  author: {
+    username: string;
+  };
+}
+
+interface PostPageProps {
+  params: { id: string };
+}
+
+export default async function PostPage({ params }: PostPageProps) {
   const { userId } = auth();
   if (!userId) {
     notFound();
@@ -42,7 +54,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
       {post.image && <img src={post.image} alt="Post image" className="mb-4" />}
       <Button onClick={likePost}>Like ({post.likes.length})</Button>
       <h2 className="text-xl font-bold mt-4 mb-2">Comments</h2>
-      {post.comments.map((comment: any) => (
+      {post.comments.map((comment: Comment) => (
         <div key={comment._id} className="mb-2">
           <strong>{comment.author.username}:</strong> {comment.content}
         </div>
@@ -54,4 +66,3 @@ export default async function PostPage({ params }: { params: { id: string } }) {
     </div>
   )
 }
-
