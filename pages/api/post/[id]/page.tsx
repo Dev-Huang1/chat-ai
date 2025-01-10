@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import dbConnect from '../../../../lib/mongodb';
 import Post from '../../../../models/Post';
 import User from '../../../../models/User';
+import { UserType } from '../../../../models/UserType';
 
 interface Comment {
   _id: string;
