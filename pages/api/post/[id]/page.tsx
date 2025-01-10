@@ -18,34 +18,50 @@ interface PostPageProps {
   params: { id: string };
 }
 
-export default async function PostPage({ params }: PostPageProps) {
+export default function PostPage({ params }: PostPageProps) {
   const { userId } = useAuth();
-  if (!userId) {
-    notFound();
-  }
+  const [post, setPost] = useState<Post | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  await dbConnect();
-  const post = await Post.findById(params.id).populate('author').populate('comments.author');
-  if (!post) {
-    notFound();
-  }
+  useEffect(() => {
+    const fetchData = async () => {
+      await dbConnect();
+      const postData = await Post.findById(params.id).populate('author').populate('comments.author');
+      if (!postData) {
+        notFound();
+        return;
+      }
+      setPost(postData);
 
-  const currentUser = await User.findOne({ clerkId: userId });
+      if (userId) {
+        const user = await User.findOne({ clerkId: userId });
+        setCurrentUser(user);
+      } else {
+        notFound();
+      }
+    };
+
+    fetchData();
+  }, [userId, params.id]);
 
   const likePost = async () => {
-    'use server'
-    if (!post.likes.includes(currentUser._id)) {
+    if (post && currentUser && !post.likes.includes(currentUser._id)) {
       post.likes.push(currentUser._id);
       await post.save();
     }
   };
 
   const addComment = async (formData: FormData) => {
-    'use server'
-    const content = formData.get('content') as string;
-    post.comments.push({ content, author: currentUser._id });
-    await post.save();
+    if (post && currentUser) {
+      const content = formData.get('content') as string;
+      post.comments.push({ content, author: currentUser._id });
+      await post.save();
+    }
   };
+
+  if (!post || !currentUser) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="container mx-auto p-4">
