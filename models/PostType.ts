@@ -16,9 +16,6 @@ const PostSchema = new mongoose.Schema({
   image: String,
 });
 
-const PostType = mongoose.model('Post', new mongoose.Schema({
-  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  content: String,
-}));
+const PostModel = mongoose.model<PostType>('Post', PostSchema);
 
-export default PostType;
+export default PostModel;
