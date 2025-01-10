@@ -9,16 +9,22 @@ import { pusherClient } from '../lib/pusher'
 import { useInView } from 'react-intersection-observer'
 import Notifications from '../components/Notifications'
 
+interface Post {
+  _id: string;
+  content: string;
+  author: string;
+}
+
 export default function Home() {
   const { userId } = useAuth()
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState<Post[]>([])
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
 
   const fetchPosts = useCallback(async () => {
     const res = await fetch(`/api/posts?page=${page}`)
-    const data = await res.json()
+    const data: Post[] = await res.json()
     setPosts(prevPosts => [...prevPosts, ...data])
     setHasMore(data.length === 10)
     setPage(prevPage => prevPage + 1)
@@ -34,7 +40,7 @@ export default function Home() {
     fetchPosts()
 
     const channel = pusherClient.subscribe('posts')
-    channel.bind('new-post', (newPost: any) => {
+    channel.bind('new-post', (newPost: Post) => {
       setPosts(prevPosts => [newPost, ...prevPosts])
     })
 
@@ -58,7 +64,7 @@ export default function Home() {
             <Notifications />
           </div>
           <div className="space-y-4">
-            {posts.map((post: any) => (
+            {posts.map((post: Post) => (
               <PostCard key={post._id} post={post} />
             ))}
             {hasMore && <div ref={ref}>Loading more...</div>}
