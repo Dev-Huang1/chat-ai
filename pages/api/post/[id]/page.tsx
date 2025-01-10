@@ -1,7 +1,7 @@
-import { auth } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
 import { notFound } from 'next/navigation';
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import dbConnect from '../../../lib/mongodb';
 import Post from '../../../models/Post';
 import User from '../../../models/User';
@@ -19,7 +19,7 @@ interface PostPageProps {
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { userId } = auth();
+  const { userId } = useAuth();
   if (!userId) {
     notFound();
   }
@@ -64,5 +64,5 @@ export default async function PostPage({ params }: PostPageProps) {
         <Button type="submit">Add Comment</Button>
       </form>
     </div>
-  )
+  );
 }
