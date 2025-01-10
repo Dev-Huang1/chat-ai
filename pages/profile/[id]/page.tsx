@@ -6,23 +6,38 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import PostCard from '../../../components/PostCard'
 
+interface User {
+  clerkId: string;
+  username: string;
+  profileImage: string;
+  followers: string[];
+  following: string[];
+}
+
+interface Post {
+  _id: string;
+  content: string;
+}
+
 export default function UserProfile({ params }: { params: { id: string } }) {
   const { userId } = useAuth()
-  const [user, setUser] = useState<any>(null)
-  const [posts, setPosts] = useState([])
+  const [user, setUser] = useState<User | null>(null)
+  const [posts, setPosts] = useState<Post[]>([])
   const [isFollowing, setIsFollowing] = useState(false)
 
   useEffect(() => {
-    fetch(`/api/users/${params.id}`)
-      .then(res => res.json())
-      .then(data => {
-        setUser(data)
-        setIsFollowing(data.followers.includes(userId))
-      })
+    const fetchUserData = async () => {
+      const userResponse = await fetch(`/api/users/${params.id}`)
+      const userData = await userResponse.json()
+      setUser(userData)
+      setIsFollowing(userData.followers.includes(userId))
 
-    fetch(`/api/users/${params.id}/posts`)
-      .then(res => res.json())
-      .then(data => setPosts(data))
+      const postsResponse = await fetch(`/api/users/${params.id}/posts`)
+      const postsData = await postsResponse.json()
+      setPosts(postsData)
+    }
+
+    fetchUserData()
   }, [params.id, userId])
 
   const handleFollow = async () => {
@@ -51,11 +66,10 @@ export default function UserProfile({ params }: { params: { id: string } }) {
         )}
       </div>
       <div className="space-y-4">
-        {posts.map((post: any) => (
+        {posts.map((post) => (
           <PostCard key={post._id} post={post} />
         ))}
       </div>
     </div>
   )
 }
-
