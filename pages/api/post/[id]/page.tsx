@@ -37,7 +37,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{post.author.username}'s Post</h1>
+      <h1 className="text-2xl font-bold mb-4">{post.author.username}&apos;s Post</h1>
       <p className="mb-4">{post.content}</p>
       {post.image && <img src={post.image} alt="Post image" className="mb-4" />}
       <Button onClick={likePost}>Like ({post.likes.length})</Button>
