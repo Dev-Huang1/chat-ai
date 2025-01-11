@@ -1,30 +1,24 @@
-import { ClerkProvider } from '@clerk/nextjs'
+import { cn } from '@/lib/utils'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { Inter } from 'next/font/google'
-import { ThemeProvider } from "@/components/theme-provider"
+import { ReactNode } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export const metadata = {
+  title: 'ChatGPT UI',
+  description: 'A simple chatbot built using the AI SDK and gpt-4o-mini.',
+}
+
+export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head />
-        <body className={inter.className}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body
+        className={cn('flex min-h-svh flex-col antialiased', inter.className)}
+      >
+        <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+      </body>
+    </html>
   )
 }
 
