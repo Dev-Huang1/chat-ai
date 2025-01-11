@@ -19,15 +19,15 @@ export async function POST(req: Request) {
 
   try {
     const response = await axios.post(
-      process.env.CHATGPT_API_URL,
-      { messages },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CHATGPT_API_KEY}`
-        }
+    process.env.CHATGPT_API_URL as string,
+    { messages },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.CHATGPT_API_KEY as string}`,
       }
-    )
+    }
+  )
     const aiMessage = response.data.choices[0].message
 
     // Store the conversation in MongoDB
