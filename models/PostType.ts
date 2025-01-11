@@ -16,4 +16,4 @@ const PostSchema = new mongoose.Schema({
   image: String,
 });
 
-export { PostType };
+export type { PostType };
