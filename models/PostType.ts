@@ -16,7 +16,4 @@ const PostSchema = new mongoose.Schema({
   image: String,
 });
 
-const PostModel = mongoose.models.Post || mongoose.model<PostType>('Post', PostSchema);
-
 export { PostType };
-export default PostModel;
