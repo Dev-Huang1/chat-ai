@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { ChatGPTIcon } from './chatgpt-icon'
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 
 interface Message {
   role: 'user' | 'assistant'
@@ -18,7 +18,7 @@ export function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isTyping, setIsTyping] = useState(false)
-  const { toast } = useToast()
+  const { toast, toasts } = useToast()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -101,6 +101,13 @@ export function ChatInterface() {
           <Button type="submit" disabled={isTyping}>Send</Button>
         </form>
       </CardFooter>
+      {toasts.map((toast, index) => (
+        <div key={index} className={`fixed bottom-4 right-4 p-4 rounded-md ${toast.variant === 'destructive' ? 'bg-red-500' : 'bg-green-500'} text-white`}>
+          <h3 className="font-bold">{toast.title}</h3>
+          <p>{toast.description}</p>
+        </div>
+      ))}
     </Card>
   )
 }
+
