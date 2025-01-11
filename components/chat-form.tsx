@@ -6,7 +6,7 @@ import { useChat } from 'ai/react'
 
 import { ArrowUpIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip'
 import { AutoResizeTextarea } from '@/components/autoresize-textarea'
 
 export function ChatForm({
