@@ -1,9 +1,5 @@
-import { ChatInterface } from '@/components/chat-interface'
-// import { ThemeToggle } from '@/components/theme-toggle'
-// import { SignIn, SignedIn, SignedOut } from "@clerk/nextjs"
+import { ChatForm } from '@/components/chat-form'
 
-export default function Home() {
-  return (
-    <ChatInterface />
-  )
+export default function Page() {
+  return <ChatForm />
 }
