@@ -1,75 +1,21 @@
-'use client'
-
-import { useEffect, useState, useCallback } from 'react'
-import { useAuth } from '@clerk/nextjs'
-import Link from 'next/link'
-import { Button } from "@/components/ui/button"
-import PostCard from '../components/PostCard'
-import { pusherClient } from '../lib/pusher'
-import { useInView } from 'react-intersection-observer'
-import Notifications from '../components/Notifications'
-import { Post } from '../types'
+import { ChatInterface } from '@/components/chat-interface'
+import { ThemeToggle } from '@/components/theme-toggle'
+import { SignIn, SignedIn, SignedOut, UserButton } from "@clerk/nextjs"
 
 export default function Home() {
-  const { userId } = useAuth()
-  const [posts, setPosts] = useState<Post[]>([])
-  const [page, setPage] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
-  const { ref, inView } = useInView()
-
-  const fetchPosts = useCallback(async () => {
-    const res = await fetch(`/api/posts?page=${page}`)
-    const data: Post[] = await res.json()
-    setPosts(prevPosts => [...prevPosts, ...data])
-    setHasMore(data.length === 10)
-    setPage(prevPage => prevPage + 1)
-  }, [page])
-
-  useEffect(() => {
-    if (inView && hasMore) {
-      fetchPosts()
-    }
-  }, [inView, hasMore, fetchPosts])
-
-  useEffect(() => {
-    fetchPosts()
-
-    const channel = pusherClient.subscribe('posts')
-    channel.bind('new-post', (newPost: any) => {
-      setPosts(prevPosts => [newPost, ...prevPosts])
-    })
-
-    return () => {
-      pusherClient.unsubscribe('posts')
-    }
-  }, [fetchPosts])
-
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Welcome to Social Media App</h1>
-      {userId ? (
-        <>
-          <div className="flex gap-2 mb-4">
-            <Link href="/profile">
-              <Button>Profile</Button>
-            </Link>
-            <Link href="/search">
-              <Button>Search</Button>
-            </Link>
-            <Notifications />
-          </div>
-          <div className="space-y-4">
-            {posts.map((post: any) => (
-              <PostCard key={post._id} post={post} />
-            ))}
-            {hasMore && <div ref={ref}>Loading more...</div>}
-          </div>
-        </>
-      ) : (
-        <Link href="/sign-in">
-          <Button>Sign In</Button>
-        </Link>
-      )}
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-2xl mx-auto mb-4 flex justify-between items-center">
+        <UserButton afterSignOutUrl="/" />
+        <ThemeToggle />
+      </div>
+      <SignedIn>
+        <ChatInterface />
+      </SignedIn>
+      <SignedOut>
+        <SignIn />
+      </SignedOut>
     </div>
   )
 }
+
