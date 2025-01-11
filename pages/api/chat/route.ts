@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
 // import clientPromise from '@/lib/mongodb'
-import { useAuth } from '@clerk/nextjs'
+// import { useAuth } from '@clerk/nextjs'
 
 if (!process.env.CHATGPT_API_URL || !process.env.CHATGPT_API_KEY) {
   throw new Error('Missing ChatGPT API configuration')
