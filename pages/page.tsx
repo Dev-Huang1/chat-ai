@@ -1,6 +1,6 @@
 import { ChatInterface } from '@/components/chat-interface'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { SignIn, SignedIn, SignedOut, UserButton, RedirectToSignIn } from "@clerk/nextjs"
+// import { SignIn, SignedIn, SignedOut, UserButton, RedirectToSignIn } from "@clerk/nextjs"
 
 export default function Home() {
   return (
@@ -14,7 +14,6 @@ export default function Home() {
       </SignedIn>
       <SignedOut>
         <SignIn />
-        <RedirectToSignIn />
       </SignedOut>
     </div>
   )
