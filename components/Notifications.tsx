@@ -10,32 +10,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { pusherClient } from '../lib/pusher'
-
-interface Notification {
-  _id: string;
-  type: 'like' | 'comment' | 'follow';
-  sender: {
-    username: string;
-  };
-  read: boolean;
-}
+import { Notification } from '../types'
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const res = await fetch('/api/notifications')
-      const data = await res.json()
-      setNotifications(data)
-      setUnreadCount(data.filter((n: Notification) => !n.read).length)
-    }
-
-    fetchNotifications()
+    fetch('/api/notifications')
+      .then(res => res.json())
+      .then(data => {
+        setNotifications(data)
+        setUnreadCount(data.filter((n: any) => !n.read).length)
+      })
 
     const channel = pusherClient.subscribe('private-notifications')
-    channel.bind('new-notification', (newNotification: Notification) => {
+    channel.bind('new-notification', (newNotification: any) => {
       setNotifications(prevNotifications => [newNotification, ...prevNotifications])
       setUnreadCount(prevCount => prevCount + 1)
     })
@@ -47,7 +37,7 @@ export default function Notifications() {
 
   const markAsRead = async (id: string) => {
     await fetch(`/api/notifications/${id}`, { method: 'PUT' })
-    setNotifications(notifications.map((n) => n._id === id ? { ...n, read: true } : n))
+    setNotifications(notifications.map((n: any) => n._id === id ? { ...n, read: true } : n))
     setUnreadCount(prevCount => prevCount - 1)
   }
 
@@ -64,7 +54,7 @@ export default function Notifications() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {notifications.map((notification) => (
+        {notifications.map((notification: any) => (
           <DropdownMenuItem key={notification._id} onClick={() => markAsRead(notification._id)}>
             {notification.type === 'like' && `${notification.sender.username} liked your post`}
             {notification.type === 'comment' && `${notification.sender.username} commented on your post`}
@@ -75,3 +65,4 @@ export default function Notifications() {
     </DropdownMenu>
   )
 }
+

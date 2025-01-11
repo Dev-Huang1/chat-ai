@@ -5,14 +5,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import PostCard from '../../components/PostCard'
 
-interface Post {
-  _id: string;
-  content: string;
-}
-
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState<Post[]>([])
+  const [searchResults, setSearchResults] = useState([])
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -36,7 +31,7 @@ export default function SearchPage() {
         </div>
       </form>
       <div className="space-y-4">
-        {searchResults.map((post) => (
+        {searchResults.map((post: any) => (
           <PostCard key={post._id} post={post} />
         ))}
       </div>

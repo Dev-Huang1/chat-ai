@@ -1,73 +1,48 @@
-import { UserType } from '../../../../models/UserType';
-import type { PostType } from '../../../../models/PostType';
-import { useState, useEffect } from 'react';
-import { useAuth } from '@clerk/nextjs';
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { auth } from '@clerk/nextjs';
+import { notFound } from 'next/navigation';
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import dbConnect from '../../../../lib/mongodb';
-import mongoose from 'mongoose';
 import Post from '../../../../models/Post';
 import User from '../../../../models/User';
 
-interface Comment {
-  _id: string;
-  content: string;
-  author: {
-    username: string;
-  };
-}
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const { userId } = auth();
+  if (!userId) {
+    notFound();
+  }
 
-interface PostPageProps {
-  params: { id: string };
-}
+  await dbConnect();
+  const post = await Post.findById(params.id).populate('author').populate('comments.author');
+  if (!post) {
+    notFound();
+  }
 
-export default function PostPage({ params }: PostPageProps) {
-  const { userId } = useAuth();
-  const [post, setPost] = useState<PostType | null>(null);
-  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await dbConnect();
-      const postData = await Post.findById(params.id).populate('author').populate('comments.author');
-      setPost(postData);
-
-      if (userId) {
-        const userData = await User.findOne({ clerkId: userId });
-        setCurrentUser(userData);
-      }
-    };
-    fetchData();
-  }, [userId, params.id]);
+  const currentUser = await User.findOne({ clerkId: userId });
 
   const likePost = async () => {
-    if (currentUser && post && !post.likes.includes(currentUser._id as mongoose.Types.ObjectId)) {
+    'use server'
+    if (!post.likes.includes(currentUser._id)) {
       post.likes.push(currentUser._id);
       await post.save();
-      setPost({ ...post });
     }
   };
 
-
   const addComment = async (formData: FormData) => {
-    if (!currentUser || !post) return;
-
+    'use server'
     const content = formData.get('content') as string;
     post.comments.push({ content, author: currentUser._id });
     await post.save();
-    setPost({ ...post });
   };
-
-  if (!post) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{post.author.username}&apos;s Post</h1>
+      <h1 className="text-2xl font-bold mb-4">{post.author.username}'s Post</h1>
       <p className="mb-4">{post.content}</p>
       {post.image && <img src={post.image} alt="Post image" className="mb-4" />}
       <Button onClick={likePost}>Like ({post.likes.length})</Button>
       <h2 className="text-xl font-bold mt-4 mb-2">Comments</h2>
-      {post.comments.map((comment: Comment) => (
+      {post.comments.map((comment: any) => (
         <div key={comment._id} className="mb-2">
           <strong>{comment.author.username}:</strong> {comment.content}
         </div>
@@ -77,5 +52,6 @@ export default function PostPage({ params }: PostPageProps) {
         <Button type="submit">Add Comment</Button>
       </form>
     </div>
-  );
+  )
 }
+

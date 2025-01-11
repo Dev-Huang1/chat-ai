@@ -1,17 +1,9 @@
-import { auth } from '@clerk/nextjs'
+import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 import dbConnect from '../../../../../lib/mongodb'
 import User from '../../../../../models/User'
 import Notification from '../../../../../models/Notification'
 import { pusherServer } from '../../../../../lib/pusher'
-import { ObjectId } from 'mongodb'
-
-interface UserType {
-  _id: ObjectId;
-  clerkId: string;
-  following: ObjectId[];
-  followers: ObjectId[];
-}
 
 export async function POST(
   request: Request,
@@ -24,8 +16,8 @@ export async function POST(
 
   await dbConnect()
 
-  const currentUser = await User.findOne({ clerkId: userId }) as UserType
-  const userToFollow = await User.findById(params.id) as UserType
+  const currentUser = await User.findOne({ clerkId: userId })
+  const userToFollow = await User.findById(params.id)
 
   if (!userToFollow) {
     return NextResponse.json({
@@ -40,6 +32,7 @@ export async function POST(
     userToFollow.followers.push(currentUser._id)
     await userToFollow.save()
 
+    // Create a notification
     const notification = new Notification({
       recipient: userToFollow._id,
       sender: currentUser._id,
@@ -47,6 +40,7 @@ export async function POST(
     })
     await notification.save()
 
+    // Send real-time notification
     await pusherServer.trigger(`private-notifications-${userToFollow._id}`, 'new-notification', notification)
   }
 
@@ -64,8 +58,8 @@ export async function DELETE(
 
   await dbConnect()
 
-  const currentUser = await User.findOne({ clerkId: userId }) as UserType
-  const userToUnfollow = await User.findById(params.id) as UserType
+  const currentUser = await User.findOne({ clerkId: userId })
+  const userToUnfollow = await User.findById(params.id)
 
   if (!userToUnfollow) {
     return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -73,15 +67,16 @@ export async function DELETE(
 
   if (currentUser.following.includes(userToUnfollow._id)) {
     currentUser.following = currentUser.following.filter(
-      (id) => id.toString() !== userToUnfollow._id.toString()
+      (id: any) => id.toString() !== userToUnfollow._id.toString()
     )
     await currentUser.save()
 
     userToUnfollow.followers = userToUnfollow.followers.filter(
-      (id) => id.toString() !== currentUser._id.toString()
+      (id: any) => id.toString() !== currentUser._id.toString()
     )
     await userToUnfollow.save()
   }
 
   return NextResponse.json({ message: 'Successfully unfollowed user' })
 }
+

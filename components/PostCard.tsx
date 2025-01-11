@@ -3,20 +3,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Heart, MessageCircle } from 'lucide-react'
+import { Post } from '../types'
 
 interface PostCardProps {
-  post: {
-    _id: string;
-    content: string;
-    author: {
-      username: string;
-      profileImage?: string;
-    };
-    likes: string[];
-    comments: { _id: string; content: string; author: { username: string } }[]; // Define comments structure
-    image?: string;
-    createdAt: string;
-  }
+  post: Post;
 }
 
 export default function PostCard({ post }: PostCardProps) {

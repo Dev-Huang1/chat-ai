@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
@@ -8,12 +8,7 @@ import PostCard from '../components/PostCard'
 import { pusherClient } from '../lib/pusher'
 import { useInView } from 'react-intersection-observer'
 import Notifications from '../components/Notifications'
-
-interface Post {
-  _id: string;
-  content: string;
-  author: string;
-}
+import { Post } from '../types'
 
 export default function Home() {
   const { userId } = useAuth()
@@ -22,32 +17,32 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
 
-  const fetchPosts = useCallback(async () => {
+  const fetchPosts = async () => {
     const res = await fetch(`/api/posts?page=${page}`)
     const data: Post[] = await res.json()
     setPosts(prevPosts => [...prevPosts, ...data])
     setHasMore(data.length === 10)
     setPage(prevPage => prevPage + 1)
-  }, [page])
+  }
 
   useEffect(() => {
     if (inView && hasMore) {
       fetchPosts()
     }
-  }, [inView, hasMore, fetchPosts])
+  }, [inView, hasMore])
 
   useEffect(() => {
     fetchPosts()
 
     const channel = pusherClient.subscribe('posts')
-    channel.bind('new-post', (newPost: Post) => {
+    channel.bind('new-post', (newPost: any) => {
       setPosts(prevPosts => [newPost, ...prevPosts])
     })
 
     return () => {
       pusherClient.unsubscribe('posts')
     }
-  }, [fetchPosts])
+  }, [])
 
   return (
     <div className="container mx-auto p-4">
@@ -64,7 +59,7 @@ export default function Home() {
             <Notifications />
           </div>
           <div className="space-y-4">
-            {posts.map((post: Post) => (
+            {posts.map((post: any) => (
               <PostCard key={post._id} post={post} />
             ))}
             {hasMore && <div ref={ref}>Loading more...</div>}
@@ -78,3 +73,4 @@ export default function Home() {
     </div>
   )
 }
+
