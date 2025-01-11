@@ -5,11 +5,6 @@ import { ReactNode } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: 'ChatGPT UI',
-  description: 'A simple chatbot built using the AI SDK and gpt-4o-mini.',
-}
-
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -22,3 +17,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   )
 }
 
+export const metadata = {
+  title: 'ChatGPT UI',
+  description: 'A simple chatbot built using the AI SDK and gpt-4o-mini.',
+}
