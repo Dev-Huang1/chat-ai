@@ -83,6 +83,7 @@ export function ChatForm({
           placeholder="Enter a message"
           className="placeholder:text-muted-foreground flex-1 bg-transparent focus:outline-none"
         />
+        <TooltipProvider delayDuration={0}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -95,6 +96,7 @@ export function ChatForm({
           </TooltipTrigger>
           <TooltipContent sideOffset={12}>Submit</TooltipContent>
         </Tooltip>
+        </TooltipProvider>
       </form>
     </main>
   )
