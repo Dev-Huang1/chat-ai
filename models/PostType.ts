@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-interface PostType extends mongoose.Document {
+export interface PostInterface extends mongoose.Document {
   likes: mongoose.Types.ObjectId[];
   content: string;
   author: mongoose.Types.ObjectId;
-  comments: { content: string, author: mongoose.Types.ObjectId }[];
+  comments: { content: string; author: mongoose.Types.ObjectId }[];
   image?: string;
 }
 
@@ -16,6 +16,6 @@ const PostSchema = new mongoose.Schema({
   image: String,
 });
 
-const PostModel = mongoose.model<PostType>('Post', PostSchema);
+const PostModel = mongoose.model<PostInterface>('Post', PostSchema);
 
-export default PostModel;
+export { PostModel };
