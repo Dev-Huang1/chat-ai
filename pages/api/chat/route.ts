@@ -8,10 +8,10 @@ if (!process.env.CHATGPT_API_URL || !process.env.CHATGPT_API_KEY) {
 }
 
 export async function POST(req: Request) {
-  const { userId } = auth()
+  /*const { userId } = auth()
   if (!userId) {
     return new NextResponse('Unauthorized', { status: 401 })
-  }
+  }*/
 
   const { messages } = await req.json()
   // const client = await clientPromise
