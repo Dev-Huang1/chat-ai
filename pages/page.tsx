@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import Link from 'next/link'
 import { Button } from "@/components/ui/button"
@@ -17,19 +17,19 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     const res = await fetch(`/api/posts?page=${page}`)
     const data: Post[] = await res.json()
     setPosts(prevPosts => [...prevPosts, ...data])
     setHasMore(data.length === 10)
     setPage(prevPage => prevPage + 1)
-  }
+  }, [page])
 
   useEffect(() => {
     if (inView && hasMore) {
       fetchPosts()
     }
-  }, [inView, hasMore])
+  }, [inView, hasMore, fetchPosts])
 
   useEffect(() => {
     fetchPosts()
@@ -42,7 +42,7 @@ export default function Home() {
     return () => {
       pusherClient.unsubscribe('posts')
     }
-  }, [])
+  }, [fetchPosts])
 
   return (
     <div className="container mx-auto p-4">
@@ -73,4 +73,3 @@ export default function Home() {
     </div>
   )
 }
-
