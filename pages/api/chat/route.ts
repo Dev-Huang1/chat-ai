@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import axios from 'axios'
-import clientPromise from '@/lib/mongodb'
+// import clientPromise from '@/lib/mongodb'
 import { auth } from '@clerk/nextjs'
 
 if (!process.env.CHATGPT_API_URL || !process.env.CHATGPT_API_KEY) {
@@ -14,8 +14,8 @@ export async function POST(req: Request) {
   }
 
   const { messages } = await req.json()
-  const client = await clientPromise
-  const db = client.db('chatapp')
+  // const client = await clientPromise
+  // const db = client.db('chatapp')
 
   try {
     const response = await axios.post(
@@ -31,12 +31,12 @@ export async function POST(req: Request) {
     const aiMessage = response.data.choices[0].message
 
     // Store the conversation in MongoDB
-    await db.collection('conversations').insertOne({
+    /* await db.collection('conversations').insertOne({
       userId,
       message: messages[messages.length - 1].content,
       response: aiMessage.content,
       timestamp: new Date(),
-    })
+    }) */
 
     return NextResponse.json(aiMessage)
   } catch (error) {
