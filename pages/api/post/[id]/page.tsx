@@ -1,5 +1,5 @@
 import { UserType } from '../../../../models/UserType';
-import { PostType } from '../../../../models/PostType';
+import PostModel, { PostType } from '../../../../models/PostType';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
