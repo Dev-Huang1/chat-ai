@@ -14,7 +14,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   if (!isClient) return null;
 
   return (
-    <ClerkProvider frontendApi={clerkFrontendApi}>
+    <ClerkProvider clerkFrontendApi={clerkFrontendApi}>
       <Component {...pageProps} />
     </ClerkProvider>
   );
